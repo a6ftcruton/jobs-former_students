@@ -20,6 +20,7 @@ module Jobs
         companies
         rescue Mechanize::ResponseCodeError
           puts "404 error at #{base_uri}" + "#{student_number}"
+          return companies
       end
 
       def get_all_company_names(uri_range_end)
@@ -28,7 +29,16 @@ module Jobs
           get_company_name(i)
           i += 1
         end
-        puts companies.find_all { |co| !co.empty? }.uniq
+        companies.find_all { |co| !co.empty? }
+      end
+
+      def get_unique_company_names(uri_range_end)
+        get_all_company_names(uri_range_end).uniq
+      end
+
+      def sort_companies_by_count(uri_range_end)
+        results = get_all_company_names(uri_range_end)
+        results.group_by { |co| co }
       end
     end
   end
