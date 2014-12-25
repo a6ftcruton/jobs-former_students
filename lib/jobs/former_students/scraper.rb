@@ -3,43 +3,55 @@ require 'mechanize'
 module Jobs
   module FormerStudents
     class Scraper
-      attr_reader :companies
+      attr_reader :companies, :agent
 
       def initialize
         @companies = [] 
+        @agent = Mechanize.new
+      end
+
+      def url_to_scrape(uri)
+        base_url = 'https://students.gschool.it/students/'
+        agent.get( base_url + "#{uri}" )
       end
 
       def get_company_name(student_number)
-        agent = Mechanize.new
-        base_uri = 'https://students.gschool.it/students/'
-        page = agent.get( base_uri + "#{student_number}" )
-
-        company = page.at('.hero-subtitle > h3').text.strip
-        companies.push(company) unless company.empty?
-        puts "Company at /students/" + "#{student_number} is: " + "#{company}" 
+        page = url_to_scrape(student_number)
+        company_name = page.at('.hero-subtitle > h3').text.strip
+        companies.push(company_name) unless company_name.empty?
+        puts "Company at /students/" + "#{student_number} is: " + "#{company_name}" 
         companies
         rescue Mechanize::ResponseCodeError
-          puts "404 error at #{base_uri}" + "#{student_number}"
+          puts "404 error at /students" + "#{student_number}"
           return companies
       end
 
-      def get_all_company_names(uri_range_end)
+      def get_company_names(total_students)
         i = 1
-        until i == uri_range_end
+        until i == total_students
           get_company_name(i)
           i += 1
         end
         companies.find_all { |co| !co.empty? }
       end
 
-      def get_unique_company_names(uri_range_end)
-        get_all_company_names(uri_range_end).uniq
+      def get_unique_company_names(total_students)
+        get_company_names(total_students).uniq
       end
 
-      def sort_companies_by_count(uri_range_end)
-        results = get_all_company_names(uri_range_end)
-        results.group_by { |co| co }
+      def total_students_employed_per_company(total_students)
+        companies = get_company_names(total_students)
+        companies.inject(Hash.new(0)) do |h,v| 
+          h[v] += 1 
+          h 
+        end 
       end
+
+      def sort_by_frequency(total_students)
+        frequency = total_students_employed_per_company(total_students)
+        frequency.sort_by { |k,v| v }.reverse
+      end
+
     end
   end
 end

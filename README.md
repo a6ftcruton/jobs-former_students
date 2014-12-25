@@ -18,34 +18,35 @@ Or install it yourself as:
 
     $ gem install jobs-former_students
 
-## Usage
+## Basic Usage
 This gem provides instance methods to return single company names or an array of all company names. Start by creating a new instance of the Scraper class: 
  ```ruby
  scraper = Scraper.new
  ```
-To return a full, current list of company names, pass in a limit to the #get_all_company_names method:
+To return a full, current list of company names, pass in a range limit to the #get_company_names method:
 ```ruby
   scraper.get_company_names(80)
 ```
 
 The above method will search 80 students. As of the publishing date of this Version 0.0.1 of this gem, student 65 is the last student with a valid company name. Pages after this represent either pages that do not exist or students who have incomplete profiles (i.e. no company listed).
 
+Less useful is searching for a single company. This requires you to know which id is associated with the student, and probably means you can find this information by simply browsing the site yourself. But the world is your oyster, so
+```ruby
+scraper.get_company_name(12)
+```
+will return the single company name of the student matching the number you pass in.
 
-The gem also provides two sort methods. 
+##Sorting Methods
+The gem provides two sort methods. 
 1. To return a list of only unique company names, use the following method:
 ```
 scraper.get_unique_company_names(80)
 ```
 2. To return a list of companies sorted by number of former students listed as employed at those companies, use the count_companies method:
 ```
-scraper.sort_companies_by_count(80)
+scraper.total_students_employed_per_company(80)
 ```
-
-Less useful is searching for a single company. This requires you to know which id is associated with the student, and probably means you can find this information by simply browsing the site yourself. But the world is your oyster, so
-```ruby
-scraper.get_company_name(12)
-```
-will return the single company name of the student matching the number you pass in.
+You can query the results of this method by passing in a company name as a hash key.
 
 ## Contributing
 

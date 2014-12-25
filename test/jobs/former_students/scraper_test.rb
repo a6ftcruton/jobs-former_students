@@ -23,7 +23,7 @@ class ScraperTest < Minitest::Test
 
   def test_it_returns_empty_string_if_matching_selector_is_not_on_page
     scraper = Jobs::FormerStudents::Scraper.new
-    result = scraper.get_company_name(2) # this page does not exist
+    result = scraper.get_company_name(2) # this page does not exist / is a 404 page
     assert_equal [], result 
   end
 
@@ -37,14 +37,20 @@ class ScraperTest < Minitest::Test
 
   def test_it_returns_only_unique_names
     scraper = Jobs::FormerStudents::Scraper.new
-    results = scraper.get_unique_company_names(30) # There are 3 students at Zayo in this search group 
+    results = scraper.get_unique_company_names(30) # There are 4 students at Zayo in this search group 
     zayo = results.find_all {|co| co == "Zayo" }
     refute zayo.count > 1 
   end
 
-  def test_it_returns_sorted_list_of_companies_by_count
+  def test_it_totals_students_per_company
     scraper = Jobs::FormerStudents::Scraper.new
-    results = scraper.sort_companies_by_count(80) # There are 4 students at Zayo in this search group 
-    assert_equal 4, results # Zayo?
+    results = scraper.total_students_employed_per_company(80) # There are 4 students at Zayo in this search group 
+    assert_equal 4, results["Zayo"]
+  end
+
+  def test_it_sorts_by_frequency
+    scraper = Jobs::FormerStudents::Scraper.new
+    results = scraper.sort_by_frequency(80)  
+    assert_equal ["Zayo", 4], results.first
   end
 end
