@@ -39,11 +39,14 @@ will return the single company name of the student matching the number you pass 
 ##Sorting Methods
 The gem provides three sort methods. 
 1. To return an array of only unique company names, use the following method:
-```
+
+```ruby
 scraper.get_unique_company_names(80)
 ```
-2. To return an hash where showing the total number of students employed at each company, use the `total_students_employed_per_company` method:
-```
+
+2. To return a hash where showing the total number of students employed at each company, use the `total_students_employed_per_company` method:
+
+```ruby
 scraper.total_students_employed_per_company(80)
 ```
 
@@ -59,7 +62,7 @@ results["Zayo"] # => 4
 ```
 To return a sorted list of these results, use the `sort_by_frequency` method:
 
-scraper.sort_by_frequency(80)
+`scraper.sort_by_frequency(80)`
 
 Example output:
 ```ruby
